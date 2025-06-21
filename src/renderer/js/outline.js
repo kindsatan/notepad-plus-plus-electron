@@ -219,6 +219,25 @@ class OutlineManager {
       return;
     }
     
+    // 获取当前视图模式
+    const currentViewMode = this.app.viewMode || 'editor';
+    
+    if (currentViewMode === 'preview') {
+      // 预览模式：定位到预览区域的对应标题
+      this.jumpToPreviewHeading(line);
+    } else {
+      // 编辑模式或分屏模式：定位到编辑器
+      this.jumpToEditor(line);
+    }
+    
+    // 高亮当前行
+    this.highlightCurrentLine(line);
+  }
+  
+  /**
+   * 在编辑器中跳转到指定行
+   */
+  jumpToEditor(line) {
     const editor = this.app.editor.element;
     const lines = editor.value.split('\n');
     
@@ -237,9 +256,48 @@ class OutlineManager {
       const lineHeight = parseInt(getComputedStyle(editor).lineHeight);
       const scrollTop = (line - 1) * lineHeight;
       editor.scrollTop = Math.max(0, scrollTop - editor.clientHeight / 2);
+    }
+  }
+  
+  /**
+   * 在预览区域中跳转到对应标题
+   */
+  jumpToPreviewHeading(line) {
+    const previewElement = document.getElementById('preview-content');
+    if (!previewElement) {
+      return;
+    }
+    
+    // 找到对应行的标题信息
+    const heading = this.headings.find(h => h.line === line);
+    if (!heading) {
+      return;
+    }
+    
+    // 在预览区域中查找对应的标题元素
+    const headingElements = previewElement.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    let targetElement = null;
+    
+    // 尝试通过文本内容匹配找到对应的标题元素
+    for (const element of headingElements) {
+      if (element.textContent.trim() === heading.text) {
+        targetElement = element;
+        break;
+      }
+    }
+    
+    // 如果找到了对应的标题元素，滚动到该位置
+    if (targetElement) {
+      targetElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
       
-      // 高亮当前行
-      this.highlightCurrentLine(line);
+      // 临时高亮该标题
+      targetElement.style.backgroundColor = 'rgba(255, 255, 0, 0.3)';
+      setTimeout(() => {
+        targetElement.style.backgroundColor = '';
+      }, 2000);
     }
   }
   
