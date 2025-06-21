@@ -20,6 +20,7 @@ class NotepadApp {
     this.preview = null;
     this.fileManager = null;
     this.uiManager = null;
+    this.outline = null;
     
     // 延迟初始化，确保DOM已加载
     this.init();
@@ -46,6 +47,11 @@ class NotepadApp {
       
       // 设置事件监听
       this.setupEventListeners();
+      
+      // 最后初始化大纲管理器，确保所有组件都已就绪
+      setTimeout(() => {
+        this.outline = new OutlineManager(this);
+      }, 200);
       
       // 设置键盘快捷键
       this.setupKeyboardShortcuts();

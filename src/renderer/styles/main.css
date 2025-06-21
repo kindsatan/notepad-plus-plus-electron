@@ -415,6 +415,78 @@ body {
   padding: var(--spacing-sm);
 }
 
+/* 大纲列表样式 */
+.outline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.outline-item {
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease;
+}
+
+.outline-item:hover {
+  background-color: var(--bg-hover);
+}
+
+.outline-item.active {
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+.outline-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.outline-content.level-1 {
+  padding-left: var(--spacing-sm);
+  font-weight: 600;
+}
+
+.outline-content.level-2 {
+  padding-left: calc(var(--spacing-sm) + 16px);
+  font-weight: 500;
+}
+
+.outline-content.level-3 {
+  padding-left: calc(var(--spacing-sm) + 32px);
+}
+
+.outline-content.level-4 {
+  padding-left: calc(var(--spacing-sm) + 48px);
+}
+
+.outline-content.level-5 {
+  padding-left: calc(var(--spacing-sm) + 64px);
+}
+
+.outline-content.level-6 {
+  padding-left: calc(var(--spacing-sm) + 80px);
+}
+
+.outline-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.outline-line {
+  font-size: 11px;
+  color: var(--text-disabled);
+  margin-left: var(--spacing-xs);
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;
