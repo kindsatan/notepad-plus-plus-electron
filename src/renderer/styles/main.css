@@ -199,9 +199,11 @@ body {
   align-items: center;
   justify-content: space-between;
   height: 48px;
-  background: var(--bg-tertiary);
+  background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
   padding: 0 var(--spacing-md);
+  user-select: none;
+  overflow-x: auto;
 }
 
 .toolbar-left,
@@ -261,6 +263,69 @@ body {
 .view-mode-btn.active {
   background: var(--color-primary);
   color: white;
+}
+
+/* 字体控制组件 */
+.font-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.font-family-selector {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.font-family-dropdown {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 12px;
+  padding: 4px 8px;
+  min-width: 120px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.font-family-dropdown:hover {
+  border-color: var(--color-primary);
+}
+
+.font-family-dropdown:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.font-size-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.font-size-display {
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-width: 32px;
+  text-align: center;
+  padding: 0 4px;
+  user-select: none;
+}
+
+.font-size-controls .toolbar-btn {
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+}
+
+.font-size-controls .toolbar-btn:hover {
+  background: var(--bg-primary);
 }
 
 /* 主内容区域 */

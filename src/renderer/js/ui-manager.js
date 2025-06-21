@@ -37,6 +37,7 @@ class UIManager {
     this.setupResizers();
     this.setupTooltips();
     this.setupAnimations();
+    this.setupFontControls();
     
     console.log('UI管理器初始化完成');
   }
@@ -818,5 +819,184 @@ class UIManager {
         setTimeout(() => inThrottle = false, limit);
       }
     };
+  }
+  
+  /**
+   * 设置字体控制
+   */
+  setupFontControls() {
+    // 字体控制元素
+    const fontFamilySelect = document.getElementById('font-family-select');
+    const fontSizeDisplay = document.getElementById('font-size-display');
+    const increaseFontBtn = document.getElementById('increase-font-btn');
+    const decreaseFontBtn = document.getElementById('decrease-font-btn');
+    
+    // 字体设置
+    this.fontSettings = {
+      family: 'JetBrains Mono',
+      size: 14,
+      minSize: 8,
+      maxSize: 72
+    };
+    
+    // 初始化字体设置
+    this.loadFontSettings();
+    this.updateFontDisplay();
+    
+    // 字体族选择事件
+    if (fontFamilySelect) {
+      fontFamilySelect.value = this.fontSettings.family;
+      fontFamilySelect.addEventListener('change', (e) => {
+        this.changeFontFamily(e.target.value);
+      });
+    }
+    
+    // 增大字体按钮
+    if (increaseFontBtn) {
+      increaseFontBtn.addEventListener('click', () => {
+        this.increaseFontSize();
+      });
+    }
+    
+    // 减小字体按钮
+    if (decreaseFontBtn) {
+      decreaseFontBtn.addEventListener('click', () => {
+        this.decreaseFontSize();
+      });
+    }
+    
+    // 键盘快捷键
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === '=' || e.key === '+') {
+          e.preventDefault();
+          this.increaseFontSize();
+        } else if (e.key === '-') {
+          e.preventDefault();
+          this.decreaseFontSize();
+        }
+      }
+    });
+    
+    console.log('字体控制初始化完成');
+  }
+  
+  /**
+   * 加载字体设置
+   */
+  loadFontSettings() {
+    try {
+      const saved = localStorage.getItem('fontSettings');
+      if (saved) {
+        const settings = JSON.parse(saved);
+        this.fontSettings = { ...this.fontSettings, ...settings };
+      }
+    } catch (error) {
+      console.warn('加载字体设置失败:', error);
+    }
+  }
+  
+  /**
+   * 保存字体设置
+   */
+  saveFontSettings() {
+    try {
+      localStorage.setItem('fontSettings', JSON.stringify(this.fontSettings));
+    } catch (error) {
+      console.warn('保存字体设置失败:', error);
+    }
+  }
+  
+  /**
+   * 更改字体族
+   */
+  changeFontFamily(fontFamily) {
+    this.fontSettings.family = fontFamily;
+    this.updateEditorFont();
+    this.saveFontSettings();
+    
+    console.log('字体族已更改为:', fontFamily);
+  }
+  
+  /**
+   * 增大字体
+   */
+  increaseFontSize() {
+    if (this.fontSettings.size < this.fontSettings.maxSize) {
+      this.fontSettings.size += 1;
+      this.updateFontDisplay();
+      this.updateEditorFont();
+      this.saveFontSettings();
+    }
+  }
+  
+  /**
+   * 减小字体
+   */
+  decreaseFontSize() {
+    if (this.fontSettings.size > this.fontSettings.minSize) {
+      this.fontSettings.size -= 1;
+      this.updateFontDisplay();
+      this.updateEditorFont();
+      this.saveFontSettings();
+    }
+  }
+  
+  /**
+   * 更新字体显示
+   */
+  updateFontDisplay() {
+    const fontSizeDisplay = document.getElementById('font-size-display');
+    if (fontSizeDisplay) {
+      fontSizeDisplay.textContent = `${this.fontSettings.size}px`;
+    }
+  }
+  
+  /**
+   * 更新编辑器字体
+   */
+  updateEditorFont() {
+    const editor = document.querySelector('.editor');
+    if (editor) {
+      editor.style.fontFamily = `'${this.fontSettings.family}', var(--font-mono)`;
+      editor.style.fontSize = `${this.fontSettings.size}px`;
+    }
+    
+    // 更新行号字体大小
+    const lineNumbers = document.querySelectorAll('.line-number');
+    lineNumbers.forEach(lineNumber => {
+      lineNumber.style.fontSize = `${Math.max(10, this.fontSettings.size - 2)}px`;
+    });
+    
+    // 同步更新编辑器对象的字体设置
+    if (this.app && this.app.editor && this.app.editor.updateFontSettings) {
+      this.app.editor.updateFontSettings(
+        `'${this.fontSettings.family}', var(--font-mono)`,
+        this.fontSettings.size
+      );
+    }
+  }
+  
+  /**
+   * 重置字体设置
+   */
+  resetFontSettings() {
+    this.fontSettings = {
+      family: 'JetBrains Mono',
+      size: 14,
+      minSize: 8,
+      maxSize: 72
+    };
+    
+    const fontFamilySelect = document.getElementById('font-family-select');
+    if (fontFamilySelect) {
+      fontFamilySelect.value = this.fontSettings.family;
+    }
+    
+    this.updateFontDisplay();
+    this.updateEditorFont();
+    this.saveFontSettings();
+    
+    console.log('字体设置已重置');
   }
 }

@@ -76,6 +76,33 @@
                     <i class="fas fa-exchange-alt"></i>
                 </button>
             </div>
+            <div class="toolbar-separator"></div>
+            <div class="toolbar-group font-controls">
+                <div class="font-family-selector">
+                    <button class="toolbar-btn" id="font-family-btn" title="字体">
+                        <i class="fas fa-font"></i>
+                    </button>
+                    <select class="font-family-dropdown" id="font-family-select">
+                        <option value="JetBrains Mono">JetBrains Mono</option>
+                        <option value="Fira Code">Fira Code</option>
+                        <option value="SF Mono">SF Mono</option>
+                        <option value="Monaco">Monaco</option>
+                        <option value="Cascadia Code">Cascadia Code</option>
+                        <option value="Consolas">Consolas</option>
+                        <option value="Courier New">Courier New</option>
+                        <option value="Source Code Pro">Source Code Pro</option>
+                    </select>
+                </div>
+                <div class="font-size-controls">
+                    <button class="toolbar-btn" id="decrease-font-btn" title="减小字体 (Ctrl+-)">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <span class="font-size-display" id="font-size-display">14px</span>
+                    <button class="toolbar-btn" id="increase-font-btn" title="增大字体 (Ctrl++)">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="toolbar-right">
             <div class="toolbar-group view-modes">

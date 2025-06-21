@@ -65,6 +65,24 @@ class Editor {
     // 设置初始内容 - 对于textarea使用value而不是textContent
     this.element.value = this.content;
   }
+
+  /**
+   * 更新字体设置
+   */
+  updateFontSettings(fontFamily, fontSize) {
+    if (fontFamily) {
+      this.settings.fontFamily = fontFamily;
+      this.element.style.fontFamily = fontFamily;
+    }
+    
+    if (fontSize) {
+      this.settings.fontSize = fontSize;
+      this.element.style.fontSize = fontSize + 'px';
+    }
+    
+    // 更新行号字体大小
+    this.updateLineNumbers();
+  }
   
   /**
    * 设置事件监听器

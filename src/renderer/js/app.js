@@ -56,6 +56,11 @@ class NotepadApp {
       // 应用初始视图模式
       this.setViewMode(this.viewMode);
       
+      // 应用字体设置
+      if (this.uiManager && this.uiManager.updateEditorFont) {
+        this.uiManager.updateEditorFont();
+      }
+      
       this.markPerformance('app-init-end');
       this.measurePerformance('app-init', 'app-init-start', 'app-init-end');
       
