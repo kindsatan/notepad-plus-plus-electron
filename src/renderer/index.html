@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notepad++</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/editor.css">
+    <link rel="stylesheet" href="styles/preview.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="theme-dark">
+    <!-- 自定义标题栏 -->
+    <div class="titlebar" id="titlebar">
+        <div class="titlebar-left">
+            <div class="app-icon">
+                <i class="fas fa-edit"></i>
+            </div>
+            <div class="app-title">
+                <span class="app-name">Notepad++</span>
+                <span class="file-name" id="current-file-name">未命名文档</span>
+            </div>
+        </div>
+        <div class="titlebar-center">
+            <div class="file-status">
+                <span class="file-path" id="current-file-path"></span>
+                <div class="file-indicator" id="file-indicator"></div>
+            </div>
+        </div>
+        <div class="titlebar-right">
+            <button class="titlebar-btn" id="minimize-btn" title="最小化">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button class="titlebar-btn" id="maximize-btn" title="最大化">
+                <i class="fas fa-expand"></i>
+            </button>
+            <button class="titlebar-btn close-btn" id="close-btn" title="关闭">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 主工具栏 -->
+    <div class="toolbar" id="toolbar">
+        <div class="toolbar-left">
+            <div class="toolbar-group">
+                <button class="toolbar-btn" id="new-file-btn" title="新建文件 (Ctrl+N)">
+                    <i class="fas fa-file"></i>
+                </button>
+                <button class="toolbar-btn" id="open-file-btn" title="打开文件 (Ctrl+O)">
+                    <i class="fas fa-folder-open"></i>
+                </button>
+                <button class="toolbar-btn" id="save-file-btn" title="保存 (Ctrl+S)">
+                    <i class="fas fa-save"></i>
+                </button>
+            </div>
+            <div class="toolbar-separator"></div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn" id="undo-btn" title="撤销 (Ctrl+Z)">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button class="toolbar-btn" id="redo-btn" title="重做 (Ctrl+Y)">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+            <div class="toolbar-separator"></div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn" id="find-btn" title="查找 (Ctrl+F)">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="toolbar-btn" id="toolbar-replace-btn" title="替换 (Ctrl+H)">
+                    <i class="fas fa-exchange-alt"></i>
+                </button>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <div class="toolbar-group view-modes">
+                <button class="toolbar-btn view-mode-btn active" id="editor-mode-btn" data-mode="editor" title="编辑模式 (Ctrl+1)">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="toolbar-btn view-mode-btn" id="split-mode-btn" data-mode="split" title="分屏模式 (Ctrl+2)">
+                    <i class="fas fa-columns"></i>
+                </button>
+                <button class="toolbar-btn view-mode-btn" id="preview-mode-btn" data-mode="preview" title="预览模式 (Ctrl+3)">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            <div class="toolbar-separator"></div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn" id="settings-btn" title="设置">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主内容区域 -->
+    <div class="main-content" id="main-content">
+        <!-- 侧边栏 -->
+        <div class="sidebar" id="sidebar">
+            <!-- 文件浏览器 -->
+            <div class="sidebar-section">
+                <div class="sidebar-header">
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-folder-tree"></i>
+                        文件浏览器
+                    </h3>
+                    <div class="sidebar-actions">
+                        <button class="sidebar-btn" id="open-folder-btn" title="打开文件夹">
+                            <i class="fas fa-folder-plus"></i>
+                        </button>
+                        <button class="sidebar-btn" id="refresh-folder-btn" title="刷新">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="file-tree" id="file-tree">
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>打开文件夹以查看文件</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 文档大纲 -->
+            <div class="sidebar-section">
+                <div class="sidebar-header">
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-list"></i>
+                        文档大纲
+                    </h3>
+                </div>
+                <div class="outline-tree" id="outline-tree">
+                    <div class="empty-state">
+                        <i class="fas fa-list-ul"></i>
+                        <p>打开Markdown文件以查看大纲</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 编辑器和预览区域 -->
+        <div class="editor-container" id="editor-container">
+            <!-- 标签页 -->
+            <div class="tab-bar" id="tab-bar">
+                <button class="new-tab-btn" id="new-tab-btn" title="新建标签页">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+
+            <!-- 编辑器区域 -->
+            <div class="editor-area" id="editor-area">
+                <div class="editor-wrapper">
+                    <textarea class="editor" id="editor" placeholder="开始编写您的Markdown文档..."></textarea>
+                    <div class="editor-gutter" id="editor-gutter"></div>
+                </div>
+            </div>
+
+            <!-- 分割线 -->
+            <div class="splitter" id="splitter"></div>
+
+            <!-- 预览区域 -->
+            <div class="preview-area" id="preview-area">
+                <div class="preview-wrapper">
+                    <div class="preview-content" id="preview-content">
+                        <div class="welcome-content">
+                            <h1>欢迎使用 Notepad++</h1>
+                            <p>一款面向开发者、技术写作者和高效内容创作者的，追求极致性能和现代化体验的跨平台Markdown编辑器。</p>
+                            <h2>快速开始</h2>
+                            <ul>
+                                <li>使用 <kbd>Ctrl+N</kbd> 创建新文件</li>
+                                <li>使用 <kbd>Ctrl+O</kbd> 打开现有文件</li>
+                                <li>使用 <kbd>Ctrl+Shift+O</kbd> 打开文件夹</li>
+                                <li>使用 <kbd>Ctrl+S</kbd> 保存文件</li>
+                            </ul>
+                            <h2>视图模式</h2>
+                            <ul>
+                                <li><kbd>Ctrl+1</kbd> - 编辑模式</li>
+                                <li><kbd>Ctrl+2</kbd> - 分屏模式</li>
+                                <li><kbd>Ctrl+3</kbd> - 预览模式</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 查找替换对话框 -->
+    <div class="find-dialog" id="find-dialog">
+        <div class="find-dialog-content">
+            <div class="find-input-group">
+                <input type="text" class="find-input" id="find-input" placeholder="查找...">
+                <button class="find-btn" id="find-prev-btn" title="上一个">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+                <button class="find-btn" id="find-next-btn" title="下一个">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <button class="find-btn" id="close-find-btn" title="关闭">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="replace-input-group" id="replace-input-group">
+                <input type="text" class="find-input" id="replace-input" placeholder="替换为...">
+                <button class="find-btn" id="replace-btn" title="替换">
+                    <i class="fas fa-exchange-alt"></i>
+                </button>
+                <button class="find-btn" id="replace-all-btn" title="全部替换">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>全部</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 状态栏 -->
+    <div class="status-bar" id="status-bar">
+        <div class="status-left">
+            <span class="status-item" id="cursor-position">行 1, 列 1</span>
+            <span class="status-item" id="selection-info"></span>
+            <span class="status-item" id="word-count">0 字</span>
+        </div>
+        <div class="status-right">
+            <span class="status-item" id="file-encoding">UTF-8</span>
+            <span class="status-item" id="line-ending">LF</span>
+            <span class="status-item" id="file-type">Markdown</span>
+        </div>
+    </div>
+
+    <!-- 加载脚本 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js"></script>
+    <!-- 先加载组件类 -->
+    <script src="js/editor.js"></script>
+    <script src="js/preview.js"></script>
+    <script src="js/file-manager.js"></script>
+    <script src="js/ui-manager.js"></script>
+    <!-- 最后加载主应用类 -->
+    <script src="js/app.js"></script>
+    <!-- 应用初始化已移至 app.js 文件末尾 -->
+</body>
+</html>

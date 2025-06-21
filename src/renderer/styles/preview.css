@@ -1,0 +1,661 @@
+/* 预览区域样式 */
+.preview-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  overflow: hidden;
+  min-height: 0; /* 确保flex子元素可以收缩 */
+  height: 100%; /* 确保占满父容器高度 */
+}
+
+.preview-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0; /* 确保flex子元素可以收缩 */
+  height: 100%; /* 确保占满父容器高度 */
+}
+
+.preview-content {
+  padding: var(--spacing-2xl);
+  max-width: 800px;
+  margin: 0 auto;
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+/* Markdown内容样式 */
+.preview-content h1,
+.preview-content h2,
+.preview-content h3,
+.preview-content h4,
+.preview-content h5,
+.preview-content h6 {
+  margin: 2rem 0 1rem 0;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+.preview-content h1 {
+  font-size: 2rem;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.preview-content h2 {
+  font-size: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.3rem;
+}
+
+.preview-content h3 {
+  font-size: 1.25rem;
+}
+
+.preview-content h4 {
+  font-size: 1.1rem;
+}
+
+.preview-content h5 {
+  font-size: 1rem;
+}
+
+.preview-content h6 {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.preview-content p {
+  margin: 1rem 0;
+  line-height: 1.7;
+}
+
+.preview-content strong {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.preview-content em {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.preview-content del {
+  text-decoration: line-through;
+  color: var(--text-disabled);
+}
+
+/* 链接样式 */
+.preview-content a {
+  color: var(--color-primary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.preview-content a:hover {
+  border-bottom-color: var(--color-primary);
+}
+
+.preview-content a:visited {
+  color: #a78bfa;
+}
+
+/* 列表样式 */
+.preview-content ul,
+.preview-content ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.preview-content li {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.preview-content ul li {
+  list-style-type: disc;
+}
+
+.preview-content ol li {
+  list-style-type: decimal;
+}
+
+.preview-content ul ul li {
+  list-style-type: circle;
+}
+
+.preview-content ul ul ul li {
+  list-style-type: square;
+}
+
+/* 任务列表 */
+.preview-content .task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.preview-content .task-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0.25rem 0;
+}
+
+.preview-content .task-list-item input[type="checkbox"] {
+  margin: 0.25rem 0 0 0;
+  accent-color: var(--color-primary);
+}
+
+/* 引用样式 */
+.preview-content blockquote {
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  background: var(--bg-primary);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.preview-content blockquote p {
+  margin: 0.5rem 0;
+}
+
+.preview-content blockquote p:first-child {
+  margin-top: 0;
+}
+
+.preview-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* 代码样式 */
+.preview-content code {
+  background: var(--bg-primary);
+  color: var(--color-success);
+  padding: 0.2rem 0.4rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  border: 1px solid var(--border-color);
+}
+
+.preview-content pre {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  position: relative;
+}
+
+.preview-content pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* 代码块语言标签 */
+.preview-content pre::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: var(--bg-tertiary);
+  color: var(--text-disabled);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 代码复制按钮 */
+.code-block-wrapper {
+  position: relative;
+}
+
+.copy-code-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-disabled);
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 0.7rem;
+  opacity: 0;
+}
+
+.code-block-wrapper:hover .copy-code-btn {
+  opacity: 1;
+}
+
+.copy-code-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* 表格样式 */
+.preview-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.preview-content th,
+.preview-content td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.preview-content th {
+  background: var(--bg-tertiary);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.preview-content tr:last-child td {
+  border-bottom: none;
+}
+
+.preview-content tr:hover {
+  background: var(--bg-secondary);
+}
+
+/* 水平分割线 */
+.preview-content hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+  margin: 2rem 0;
+}
+
+/* 图片样式 */
+.preview-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  margin: 1rem 0;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-normal);
+}
+
+.preview-content img:hover {
+  transform: scale(1.02);
+}
+
+/* 图片标题 */
+.preview-content figure {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.preview-content figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-disabled);
+  font-style: italic;
+}
+
+/* 数学公式 */
+.preview-content .math {
+  color: var(--color-primary);
+  font-family: 'Times New Roman', serif;
+}
+
+.preview-content .math-display {
+  text-align: center;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+/* 脚注 */
+.preview-content .footnote {
+  font-size: 0.8rem;
+  color: var(--text-disabled);
+  border-top: 1px solid var(--border-color);
+  margin-top: 2rem;
+  padding-top: 1rem;
+}
+
+.preview-content .footnote-ref {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: 0.8rem;
+  vertical-align: super;
+}
+
+/* 高亮文本 */
+.preview-content mark {
+  background: rgba(251, 191, 36, 0.3);
+  color: var(--text-primary);
+  padding: 0.1rem 0.2rem;
+  border-radius: 2px;
+}
+
+/* 键盘按键 */
+.preview-content kbd {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  box-shadow: 0 1px 0 var(--border-color);
+  color: var(--text-secondary);
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 0.2rem 0.4rem;
+  margin: 0 0.1rem;
+}
+
+/* 缩写 */
+.preview-content abbr {
+  border-bottom: 1px dotted var(--text-disabled);
+  cursor: help;
+}
+
+/* 详情折叠 */
+.preview-content details {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin: 1rem 0;
+  padding: 1rem;
+}
+
+.preview-content summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+  outline: none;
+}
+
+.preview-content details[open] summary {
+  margin-bottom: 1rem;
+}
+
+/* 警告框 */
+.preview-content .alert {
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: var(--radius-md);
+  border-left: 4px solid;
+}
+
+.preview-content .alert-info {
+  background: rgba(37, 99, 235, 0.1);
+  border-left-color: var(--color-primary);
+  color: var(--text-primary);
+}
+
+.preview-content .alert-success {
+  background: rgba(16, 185, 129, 0.1);
+  border-left-color: var(--color-success);
+  color: var(--text-primary);
+}
+
+.preview-content .alert-warning {
+  background: rgba(245, 158, 11, 0.1);
+  border-left-color: var(--color-warning);
+  color: var(--text-primary);
+}
+
+.preview-content .alert-error {
+  background: rgba(239, 68, 68, 0.1);
+  border-left-color: var(--color-error);
+  color: var(--text-primary);
+}
+
+/* 目录 */
+.preview-content .toc {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.preview-content .toc-title {
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.preview-content .toc ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.preview-content .toc li {
+  margin: 0.3rem 0;
+}
+
+.preview-content .toc a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.preview-content .toc a:hover {
+  color: var(--color-primary);
+}
+
+/* 欢迎内容样式 */
+.welcome-content {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--text-secondary);
+}
+
+.welcome-content h1 {
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.welcome-content h2 {
+  color: var(--text-primary);
+  margin: var(--spacing-xl) 0 var(--spacing-md) 0;
+  text-align: left;
+}
+
+.welcome-content ul {
+  text-align: left;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.welcome-content li {
+  margin: var(--spacing-sm) 0;
+}
+
+/* 预览工具栏 */
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
+}
+
+.preview-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  color: var(--text-disabled);
+}
+
+.preview-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.preview-action-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 11px;
+}
+
+.preview-action-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* 滚动同步指示器 */
+.sync-indicator {
+  position: absolute;
+  top: 50%;
+  right: var(--spacing-md);
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  background: var(--color-primary);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.sync-indicator.active {
+  opacity: 0.7;
+}
+
+/* 响应式预览 */
+@media (max-width: 768px) {
+  .preview-content {
+    padding: var(--spacing-lg);
+    font-size: 13px;
+  }
+  
+  .preview-content h1 {
+    font-size: 1.5rem;
+  }
+  
+  .preview-content h2 {
+    font-size: 1.25rem;
+  }
+  
+  .preview-content pre {
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .preview-content table {
+    font-size: 0.8rem;
+  }
+  
+  .preview-content th,
+  .preview-content td {
+    padding: 0.5rem;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .preview-area {
+    background: white;
+  }
+  
+  .preview-content {
+    color: black;
+    padding: 0;
+    max-width: none;
+  }
+  
+  .preview-content a {
+    color: black;
+    text-decoration: underline;
+  }
+  
+  .preview-content pre {
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+  }
+  
+  .preview-content blockquote {
+    background: #f9f9f9;
+    border-left: 4px solid #ddd;
+  }
+  
+  .preview-toolbar {
+    display: none;
+  }
+}
+
+/* 暗黑模式特定样式 */
+.theme-dark .preview-content {
+  /* 已在上面定义 */
+}
+
+/* 明亮模式样式 */
+.theme-light .preview-content {
+  color: #0f172a;
+}
+
+.theme-light .preview-content h1,
+.theme-light .preview-content h2,
+.theme-light .preview-content h3,
+.theme-light .preview-content h4,
+.theme-light .preview-content h5,
+.theme-light .preview-content h6 {
+  color: #0f172a;
+}
+
+.theme-light .preview-content code {
+  background: #f8fafc;
+  color: #059669;
+  border: 1px solid #e2e8f0;
+}
+
+.theme-light .preview-content pre {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.theme-light .preview-content blockquote {
+  background: #f8fafc;
+  color: #475569;
+}
+
+.theme-light .preview-content table {
+  background: white;
+  border: 1px solid #e2e8f0;
+}
+
+.theme-light .preview-content th {
+  background: #f8fafc;
+}
+
+.theme-light .preview-content tr:hover {
+  background: #f1f5f9;
+}
