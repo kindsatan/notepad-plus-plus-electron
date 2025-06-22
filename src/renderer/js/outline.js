@@ -223,19 +223,11 @@ class OutlineManager {
     const currentViewMode = this.app.viewMode || 'editor';
     
     if (currentViewMode === 'preview') {
-<<<<<<< HEAD
-      // 预览模式：定位到预览区域的对应标题
-      this.jumpToPreviewHeading(line);
-    } else {
-      // 编辑模式或分屏模式：定位到编辑器
-      this.jumpToEditor(line);
-=======
       // 预览模式下，滚动到预览区域的对应标题
       this.jumpToPreviewHeading(line);
     } else {
       // 编辑模式或分屏模式下，跳转到编辑器的指定行
       this.jumpToEditorLine(line);
->>>>>>> feature-updates
     }
     
     // 高亮当前行
@@ -245,11 +237,7 @@ class OutlineManager {
   /**
    * 在编辑器中跳转到指定行
    */
-<<<<<<< HEAD
-  jumpToEditor(line) {
-=======
   jumpToEditorLine(line) {
->>>>>>> feature-updates
     const editor = this.app.editor.element;
     const lines = editor.value.split('\n');
     
