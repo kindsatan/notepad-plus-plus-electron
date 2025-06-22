@@ -725,6 +725,27 @@ body {
   .toolbar-group:not(.view-modes) {
     display: none;
   }
+  
+  /* 确保预览模式下工具栏组始终可见 */
+  body.view-preview .toolbar-group:not(.view-modes) {
+    display: flex !important;
+    visibility: visible !important;
+  }
+  
+  body.view-preview .toolbar-btn {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  body.view-preview .font-controls {
+    display: flex !important;
+  }
+  
+  body.view-preview .font-family-selector,
+  body.view-preview .font-size-controls {
+    display: flex !important;
+  }
 }
 
 /* 键盘快捷键提示 */
@@ -803,4 +824,40 @@ kbd {
   100% {
     left: 100%;
   }
+}
+
+/* 修复预览模式下工具栏图标消失的问题 */
+body.view-preview .toolbar {
+  display: flex !important;
+}
+
+body.view-preview .toolbar-btn {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+body.view-preview .toolbar-btn i {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+body.view-preview .toolbar-group {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+body.view-preview .view-modes {
+  display: flex !important;
+}
+
+/* 预览模式下隐藏状态栏 */
+body.view-preview .status-bar {
+  display: none !important;
+}
+
+/* 预览模式下调整主内容区域高度 */
+body.view-preview .main-content {
+  height: calc(100vh - 48px) !important; /* 只减去工具栏高度 */
 }

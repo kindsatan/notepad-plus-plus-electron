@@ -3,6 +3,28 @@ const path = require('path');
 const fs = require('fs').promises;
 const chokidar = require('chokidar');
 
+// GPU相关设置 - 解决GPU进程异常退出问题
+// 方案1: 尝试优化GPU设置
+// app.commandLine.appendSwitch('disable-gpu-sandbox');
+// app.commandLine.appendSwitch('enable-gpu-rasterization');
+// app.commandLine.appendSwitch('enable-zero-copy');
+// app.commandLine.appendSwitch('ignore-gpu-blacklist');
+// app.commandLine.appendSwitch('disable-software-rasterizer');
+
+// 方案2: 如果GPU驱动有问题，使用软件渲染（稳定但性能较低）
+app.commandLine.appendSwitch('disable-gpu');
+app.commandLine.appendSwitch('disable-gpu-compositing');
+app.commandLine.appendSwitch('disable-gpu-rasterization');
+app.commandLine.appendSwitch('disable-gpu-sandbox');
+
+// 禁用GPU进程崩溃时的自动重启
+app.commandLine.appendSwitch('disable-gpu-process-crash-limit');
+
+// 其他稳定性设置
+app.commandLine.appendSwitch('no-sandbox');
+app.commandLine.appendSwitch('disable-web-security');
+app.commandLine.appendSwitch('disable-features', 'VizDisplayCompositor');
+
 // 保持对窗口对象的全局引用，如果不这样做，当JavaScript对象被垃圾回收时，窗口将自动关闭
 let mainWindow;
 let fileWatcher;
@@ -27,7 +49,9 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       enableRemoteModule: false,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      hardwareAcceleration: false, // 禁用硬件加速，使用软件渲染
+      webSecurity: false // 配合命令行参数
     },
     titleBarStyle: 'hidden',
     titleBarOverlay: {
