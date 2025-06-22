@@ -45,6 +45,85 @@
   --transition-slow: 0.3s ease;
 }
 
+/* 基础按钮样式 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  min-height: 32px;
+}
+
+.btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn:disabled:hover {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  transform: none;
+}
+
+/* 按钮变体 */
+.btn-primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.btn-secondary {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-secondary);
+  border-color: var(--color-primary);
+  color: var(--text-primary);
+}
+
+/* 按钮尺寸 */
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  min-height: 24px;
+}
+
+.btn-lg {
+  padding: 12px 24px;
+  font-size: 1rem;
+  min-height: 40px;
+}
+
 /* 基础重置 */
 * {
   margin: 0;
@@ -1097,8 +1176,15 @@ body.view-preview .main-content {
   width: 100%;
 }
 
-/* 在分割模式下，如果是图片文件则只显示图片预览 */
+/* 在分割模式下，如果是图片文件则显示编辑器和图片预览 */
 .view-mode-split .editor-area {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+/* 当有图片预览容器时，编辑器区域使用flex布局 */
+.editor-area:has(.image-preview-container) {
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -1121,17 +1207,21 @@ body.view-preview .main-content {
   min-height: 0;
 }
 
-/* 当存在图片预览容器时，在分割模式下隐藏编辑器 */
+/* 当存在图片预览容器时，在分割模式下调整布局但保持编辑器可见 */
 .view-mode-split .editor-area:has(.image-preview-container) .editor-wrapper {
-  display: none;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border-right: 1px solid var(--border-color);
 }
 
 .view-mode-split .editor-area:has(.image-preview-container) .image-preview-container {
-  border-left: none;
   flex: 1;
-  width: 100%;
+  min-width: 0;
+  width: 50%;
   height: 100%;
   min-height: 0;
+  border-left: 1px solid var(--border-color);
 }
 
 /* 在预览模式下图片预览占据全部空间 */

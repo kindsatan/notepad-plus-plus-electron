@@ -9,7 +9,6 @@ class OutlineManager {
     this.headings = [];
     
     if (!this.element) {
-      console.error('OutlineManager: 无法找到outline-tree元素');
       return;
     }
     
@@ -285,7 +284,7 @@ class OutlineManager {
         const previewWrapper = previewArea ? previewArea.querySelector('.preview-wrapper') : null; // 实际滚动容器
         
         if (!previewWrapper) {
-          console.error('预览滚动容器未找到');
+          // 预览滚动容器未找到
           return;
         }
         
@@ -347,7 +346,7 @@ class OutlineManager {
    */
   showEmptyState() {
     if (!this.element) {
-      console.error('OutlineManager: outline-tree元素不存在，无法显示空状态');
+      // outline-tree元素不存在，无法显示空状态
       return;
     }
     

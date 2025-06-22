@@ -26,14 +26,11 @@ class FileManager {
    */
   init() {
     if (!this.fileTree) {
-      console.error('文件树元素未找到');
       return;
     }
     
     this.setupEventListeners();
     this.showWelcomeMessage();
-    
-    console.log('文件管理器初始化完成');
   }
   
   /**
@@ -106,8 +103,7 @@ class FileManager {
         this.openFileWithInput();
       }
     } catch (error) {
-      console.error('打开文件失败:', error);
-      this.app.showError('打开文件失败', error.message);
+      this.app.showError('打开文件失败: ' + error.message);
     }
   }
   
@@ -153,8 +149,7 @@ class FileManager {
         this.app.showError('打开文件夹失败', '此功能需要在Electron环境中运行');
       }
     } catch (error) {
-      console.error('打开文件夹失败:', error);
-      this.app.showError('打开文件夹失败', error.message);
+      this.app.showError('打开文件夹失败: ' + error.message);
     }
   }
   
@@ -199,8 +194,7 @@ class FileManager {
         }
       }
     } catch (error) {
-      console.error('加载文件失败:', error);
-      this.app.showError('加载文件失败', error.message);
+      this.app.showError('加载文件失败: ' + error.message);
     } finally {
       // 移除加载标记
       this.loadingFiles.delete(filePath);
@@ -237,7 +231,6 @@ class FileManager {
         this.app.showSuccess('Word文档已转换', `${fileExtension.toUpperCase()} 文档已成功转换为Markdown格式`);
       }
     } catch (error) {
-      console.error('加载Word文档失败:', error);
       throw error;
     }
   }
@@ -261,7 +254,6 @@ class FileManager {
         }
       }
     } catch (error) {
-      console.error('加载文件夹失败:', error);
       this.app.showError('加载文件夹失败', error.message);
     }
   }
@@ -505,7 +497,7 @@ class FileManager {
         }
       }
     } catch (error) {
-      console.error('加载文件夹内容失败:', error);
+      // 静默处理错误
     }
   }
   
@@ -662,7 +654,6 @@ class FileManager {
     if (!fileName) return;
     
     // TODO: 实现新建文件
-    console.log('创建新文件:', folderPath, fileName);
   }
   
   async createNewFolder(parentPath) {
@@ -670,7 +661,6 @@ class FileManager {
     if (!folderName) return;
     
     // TODO: 实现新建文件夹
-    console.log('创建新文件夹:', parentPath, folderName);
   }
   
   async renameFile(filePath) {
@@ -679,7 +669,6 @@ class FileManager {
     if (!newName || newName === currentName) return;
     
     // TODO: 实现文件重命名
-    console.log('重命名文件:', filePath, newName);
   }
   
   async renameFolder(folderPath) {
@@ -688,7 +677,6 @@ class FileManager {
     if (!newName || newName === currentName) return;
     
     // TODO: 实现文件夹重命名
-    console.log('重命名文件夹:', folderPath, newName);
   }
   
   async deleteFile(filePath) {
@@ -697,7 +685,6 @@ class FileManager {
     if (!confirmed) return;
     
     // TODO: 实现文件删除
-    console.log('删除文件:', filePath);
   }
   
   async deleteFolder(folderPath) {
@@ -706,7 +693,6 @@ class FileManager {
     if (!confirmed) return;
     
     // TODO: 实现文件夹删除
-    console.log('删除文件夹:', folderPath);
   }
   
   copyPath(path) {
@@ -842,18 +828,11 @@ class FileManager {
    */
   async loadImageFile(filePath) {
     try {
-      console.log('[DEBUG] loadImageFile - 开始处理图片:', filePath);
       
       if (window.electronAPI && window.electronAPI.processImageFile) {
         const result = await window.electronAPI.processImageFile(filePath);
         
-        console.log('[DEBUG] loadImageFile - processImageFile结果:', {
-          success: result.success,
-          hasImageData: !!result.imageData,
-          imageDataKeys: result.imageData ? Object.keys(result.imageData) : null,
-          dataUrlLength: result.imageData?.dataUrl ? result.imageData.dataUrl.length : 0,
-          dataUrlPrefix: result.imageData?.dataUrl ? result.imageData.dataUrl.substring(0, 50) : null
-        });
+
         
         if (result.success) {
           const fileData = {
@@ -864,13 +843,7 @@ class FileManager {
             imageData: result.imageData
           };
           
-          console.log('[DEBUG] loadImageFile - 调用openFileFromData:', {
-            path: fileData.path,
-            name: fileData.name,
-            isImageFile: fileData.isImageFile,
-            hasImageData: !!fileData.imageData,
-            contentLength: fileData.content ? fileData.content.length : 0
-          });
+
           
           this.app.openFileFromData(fileData);
         } else {
@@ -880,8 +853,7 @@ class FileManager {
         throw new Error('图片处理功能不可用');
       }
     } catch (error) {
-      console.error('加载图片文件失败:', error);
-      this.app.showError('加载图片文件失败', error.message);
+      this.app.showError('加载图片文件失败: ' + error.message);
     }
   }
 }

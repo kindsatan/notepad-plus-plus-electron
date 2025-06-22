@@ -336,7 +336,6 @@ ipcMain.handle('save-file', async (event, { filePath, content }) => {
     
     return { success: true, filePath };
   } catch (error) {
-    console.error('[DEBUG] 文件保存失败:', error);
     return { success: false, error: error.message };
   }
 });
@@ -625,7 +624,6 @@ ipcMain.handle('process-word-document', async (event, options) => {
       return { success: false, error: '不支持的文件类型' };
     }
   } catch (error) {
-    console.error('[DEBUG] Word文档处理失败:', error);
     return { success: false, error: error.message };
   }
 });
@@ -734,7 +732,6 @@ ipcMain.handle('html-to-markdown', async (event, html) => {
     const markdown = turndownService.turndown(html);
     return { success: true, markdown };
   } catch (error) {
-    console.error('[DEBUG] HTML转Markdown失败:', error);
     return { success: false, error: error.message };
   }
 });
@@ -742,7 +739,6 @@ ipcMain.handle('html-to-markdown', async (event, html) => {
 // 图片文件处理
 ipcMain.handle('process-image-file', async (event, filePath) => {
   try {
-    console.log('[DEBUG] 处理图片文件:', filePath);
     
     // 检查文件是否存在
     const fileExists = await fs.access(filePath).then(() => true).catch(() => false);
@@ -795,7 +791,6 @@ ipcMain.handle('process-image-file', async (event, filePath) => {
       }
     };
   } catch (error) {
-    console.error('[DEBUG] 图片处理失败:', error);
     return { success: false, error: error.message };
   }
 });
@@ -815,7 +810,37 @@ ipcMain.handle('continue-open-folder-dialog', async (event) => {
     const folderPath = result.filePaths[0];
     return { success: true, folderPath };
   } catch (error) {
-    console.error('打开文件夹对话框失败:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+// OCR识别处理
+ipcMain.handle('perform-ocr', async (event, filePath) => {
+  try {
+    const FormData = require('form-data');
+    const fetch = require('node-fetch');
+    
+    // 读取图片文件
+    const fileBuffer = await fs.readFile(filePath);
+    const fileName = path.basename(filePath);
+    
+    // 创建FormData
+    const formData = new FormData();
+    formData.append('file', fileBuffer, fileName);
+    
+    // 调用OCR API
+    const response = await fetch('http://218.84.171.219:5000/ocr', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!response.ok) {
+      throw new Error(`OCR API请求失败: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    return { success: true, data: result };
+  } catch (error) {
     return { success: false, error: error.message };
   }
 });

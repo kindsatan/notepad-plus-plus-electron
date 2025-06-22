@@ -17,6 +17,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // 图片文件处理
   processImageFile: (filePath) => ipcRenderer.invoke('process-image-file', filePath),
   
+  // OCR识别
+  performOCR: (filePath) => ipcRenderer.invoke('perform-ocr', filePath),
+  
   // 菜单事件监听
   onMenuNewFile: (callback) => ipcRenderer.on('menu-new-file', callback),
   onMenuSaveFile: (callback) => ipcRenderer.on('menu-save-file', callback),
@@ -82,8 +85,8 @@ if (process.argv.includes('--dev')) {
   contextBridge.exposeInMainWorld('devAPI', {
     openDevTools: () => ipcRenderer.send('open-dev-tools'),
     reload: () => ipcRenderer.send('reload-window'),
-    log: (...args) => console.log('[Renderer]', ...args),
-    error: (...args) => console.error('[Renderer]', ...args)
+    log: (...args) => {},
+    error: (...args) => {}
   });
 }
 
@@ -99,12 +102,12 @@ contextBridge.exposeInMainWorld('performanceAPI', {
 
 // 错误处理
 process.on('uncaughtException', (error) => {
-  console.error('Preload uncaught exception:', error);
+  // 静默处理未捕获异常
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('Preload unhandled rejection at:', promise, 'reason:', reason);
+  // 静默处理未处理的Promise拒绝
 });
 
 // 初始化完成通知
-console.log('Preload script loaded successfully');
+// Preload script loaded successfully

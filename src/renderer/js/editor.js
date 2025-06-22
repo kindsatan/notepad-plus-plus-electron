@@ -39,7 +39,6 @@ class Editor {
    */
   init() {
     if (!this.element) {
-      console.error('编辑器元素未找到');
       return;
     }
     
@@ -47,8 +46,6 @@ class Editor {
     this.setupEventListeners();
     this.updateLineNumbers();
     this.applySyntaxHighlighting();
-    
-    console.log('编辑器初始化完成');
   }
   
   /**
@@ -405,8 +402,8 @@ class Editor {
         selection.addRange(range);
       }
     } catch (e) {
-      console.warn('恢复选择状态失败:', e);
-    }
+        // 静默处理恢复选择状态失败
+      }
   }
   
   /**
@@ -850,9 +847,8 @@ class Editor {
           searchRegex = new RegExp(text, flags);
           
         } catch (e) {
-          console.error('Invalid regex:', e);
-          return false;
-        }
+        return false;
+      }
       } else {
         // 转义特殊字符
         const escapedText = text.replace(/[.*+?^${}()|[\]\\]/g, '\$&');
@@ -894,8 +890,7 @@ class Editor {
       
       return matches.length > 0;
     } catch (error) {
-      console.error('Find error:', error);
-      return false;
+      return [];
     }
   }
   
@@ -1035,7 +1030,7 @@ class Editor {
           
         }
       } catch (error) {
-        console.error('[EDITOR] selectMatch: fallback method failed:', error);
+        // 静默处理选择匹配失败
         return;
       }
     }
@@ -1191,9 +1186,8 @@ class Editor {
 
         return true;
       } catch (error) {
-        console.error('[EDITOR] replace: error during replacement:', error);
-        return false;
-      }
+          return false;
+        }
     }
     
     // 如果没有选中匹配的文本，查找下一个匹配项
@@ -1220,7 +1214,6 @@ class Editor {
           
           return true;
         } catch (error) {
-          console.error('[EDITOR] replace: error during replacement:', error);
           return false;
         }
       }
@@ -1278,7 +1271,6 @@ class Editor {
 
       return count;
     } catch (error) {
-      console.error('替换操作失败:', error);
       return 0;
     }
   }

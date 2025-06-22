@@ -34,7 +34,6 @@ class Preview {
    */
   init() {
     if (!this.element) {
-      console.error('预览元素未找到');
       return;
     }
     
@@ -44,8 +43,6 @@ class Preview {
     
     // 显示欢迎内容
     this.showWelcomeContent();
-    
-    console.log('预览器初始化完成');
   }
   
   /**
@@ -288,8 +285,7 @@ function greet(name) {
       this.renderCharts();
       
     } catch (error) {
-      console.error('预览渲染失败:', error);
-      this.element.innerHTML = `<div class="error-content">预览渲染失败: ${error.message}</div>`;
+      this.element.innerHTML = '<div class="error">预览渲染失败</div>';
     }
   }
   
@@ -392,7 +388,6 @@ function greet(name) {
       }
     } else {
       // 相对路径文件
-      console.log('打开相对路径文件:', href);
       // TODO: 实现相对路径文件打开
     }
   }

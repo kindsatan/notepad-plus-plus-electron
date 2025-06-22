@@ -73,10 +73,7 @@ class NotepadApp {
       this.markPerformance('app-init-end');
       this.measurePerformance('app-init', 'app-init-start', 'app-init-end');
       
-      console.log('Notepad++ 应用初始化完成');
-      
     } catch (error) {
-      console.error('应用初始化失败:', error);
       this.showError('应用初始化失败', error.message);
     }
   }
@@ -164,7 +161,6 @@ class NotepadApp {
       
       // 文件系统事件
     window.electronAPI.onFileOpened((event, fileData) => {
-      console.log('[DEBUG] 接收到文件数据:', fileData);
       this.openFileFromData(fileData);
     });
     
@@ -343,44 +339,32 @@ class NotepadApp {
     this.uiManager.setActiveTab(tabId);
     
     // 检查是否为图片文件
-    console.log('[DEBUG] switchToTab - tab info:', {
-      tabId,
-      isImageFile: tab.isImageFile,
-      hasImageData: !!tab.imageData,
-      fileName: tab.name,
-      currentViewMode: this.viewMode,
-      tabKeys: Object.keys(tab),
-      imageDataKeys: tab.imageData ? Object.keys(tab.imageData) : null
-    });
-    
     if (tab.isImageFile) {
-      console.log('[DEBUG] switchToTab - 确认为图片文件，准备设置预览');
-      // 对于图片文件，自动切换到分栏模式并设置图片预览
-      console.log('[DEBUG] 图片文件检测到，自动切换到分栏模式:', tab.name);
-      
       // 自动设置为分栏模式
       if (this.viewMode !== 'split') {
-        console.log('[DEBUG] 当前视图模式:', this.viewMode, '，切换到分栏模式');
         this.setViewMode('split');
       }
       
       this.setupImagePreview(tabId);
     } else {
       // 对于普通文件，恢复编辑器显示并设置内容
-      console.log('[DEBUG] 普通文件，设置编辑器内容:', tab.name);
-      
       // 恢复编辑器显示
       const editorContainer = document.querySelector('.editor-area');
       if (editorContainer) {
-        const editorWrapper = editorContainer.querySelector('.editor-wrapper');
-        if (editorWrapper) {
-          editorWrapper.style.display = '';
-        }
-        
         // 移除图片预览容器（如果存在）
         const existingPreview = editorContainer.querySelector('.image-preview-container');
         if (existingPreview) {
           existingPreview.remove();
+        }
+        
+        // 移除图片预览容器后，编辑器包装器会自动恢复正常显示
+        const editorWrapper = editorContainer.querySelector('.editor-wrapper');
+        if (editorWrapper) {
+          // 确保编辑器本身也是可见的
+          const editor = editorWrapper.querySelector('.editor');
+          if (editor) {
+            editor.style.display = '';
+          }
         }
       }
       
@@ -519,7 +503,6 @@ class NotepadApp {
         this.showError('保存失败', result.error);
       }
     } catch (error) {
-      console.error('[DEBUG] 保存异常:', error);
       this.showError('保存失败', error.message);
     }
   }
@@ -631,7 +614,6 @@ class NotepadApp {
       // 使用文件管理器的loadWordDocument方法
       await this.fileManager.loadWordDocument(fileData.path);
     } catch (error) {
-      console.error('处理Word文档失败:', error);
       this.showError('打开Word文档失败', error.message);
     }
   }
@@ -854,31 +836,25 @@ class NotepadApp {
     
     const start = this.performanceMarks.get(startMark);
     const end = this.performanceMarks.get(endMark);
-    if (start && end) {
-      console.log(`Performance [${name}]: ${end - start}ms`);
-    }
+    // Performance measurement completed
   }
   
   /**
    * 消息显示方法
    */
   showSuccess(message) {
-    console.log('Success:', message);
     // TODO: 实现通知系统
   }
   
   showError(title, message) {
-    console.error('Error:', title, message);
     // TODO: 实现错误对话框
   }
   
   showWarning(message) {
-    console.warn('Warning:', message);
     // TODO: 实现警告通知
   }
   
   showInfo(message) {
-    console.info('Info:', message);
     // TODO: 实现信息通知
   }
   
@@ -887,82 +863,41 @@ class NotepadApp {
    */
   setupImagePreview(tabId) {
     const tab = this.tabs.get(tabId);
-    console.log('[DEBUG] setupImagePreview - 开始设置图片预览，tab info:', {
-      tabId,
-      hasTab: !!tab,
-      isImageFile: tab?.isImageFile,
-      hasImageData: !!tab?.imageData,
-      imageDataKeys: tab?.imageData ? Object.keys(tab.imageData) : null,
-      dataUrlLength: tab?.imageData?.dataUrl ? tab.imageData.dataUrl.length : 0,
-      dataUrlPrefix: tab?.imageData?.dataUrl ? tab.imageData.dataUrl.substring(0, 50) : null,
-      currentViewMode: this.viewMode
-    });
-    
     if (!tab || !tab.isImageFile) {
-      console.log('[DEBUG] setupImagePreview - 退出：tab不存在或不是图片文件');
       return;
     }
     
     // 获取编辑器容器
     const editorContainer = document.querySelector('.editor-area');
     if (!editorContainer) {
-      console.error('[DEBUG] setupImagePreview - 错误：找不到编辑器容器');
       return;
     }
     
-    console.log('[DEBUG] setupImagePreview - 编辑器容器找到，当前视图模式:', this.viewMode);
-    
-    // 根据当前视图模式决定是否隐藏编辑器
+    // 检查编辑器包装器状态
     const editorWrapper = editorContainer.querySelector('.editor-wrapper');
     if (editorWrapper) {
-      console.log('[DEBUG] setupImagePreview - 编辑器包装器找到');
-      // 对于图片文件，在所有模式下都保持编辑器包装器显示，但在预览模式下隐藏编辑器本身
-    if (this.viewMode === 'preview') {
-      console.log('[DEBUG] setupImagePreview - 预览模式，隐藏编辑器但保持包装器');
-      editorWrapper.style.display = '';
       const editor = editorWrapper.querySelector('.editor');
       if (editor) {
-        editor.style.display = 'none';
+        if (this.viewMode === 'preview') {
+          editor.style.display = 'none';
+        } else {
+          editor.style.display = '';
+        }
       }
-    } else {
-      console.log('[DEBUG] setupImagePreview - 编辑/分割模式，保持编辑器显示');
-      editorWrapper.style.display = '';
-      const editor = editorWrapper.querySelector('.editor');
-      if (editor) {
-        editor.style.display = '';
-      }
-    }
-    } else {
-      console.warn('[DEBUG] setupImagePreview - 警告：找不到编辑器包装器');
     }
     
     // 移除之前的图片预览容器（如果存在）
     const existingPreview = editorContainer.querySelector('.image-preview-container');
     if (existingPreview) {
-      console.log('[DEBUG] setupImagePreview - 移除现有的图片预览容器');
       existingPreview.remove();
-    } else {
-      console.log('[DEBUG] setupImagePreview - 没有找到现有的图片预览容器');
     }
     
     // 创建图片预览容器
     const imagePreviewContainer = document.createElement('div');
     imagePreviewContainer.className = 'image-preview-container';
-    console.log('[DEBUG] setupImagePreview - 图片预览容器已创建');
-    
-    console.log('[DEBUG] setupImagePreview - 准备创建HTML，imageData详情:', {
-      fileName: tab.imageData?.fileName,
-      fileSize: tab.imageData?.fileSize,
-      mimeType: tab.imageData?.mimeType,
-      hasDataUrl: !!tab.imageData?.dataUrl,
-      dataUrlLength: tab.imageData?.dataUrl?.length,
-      dataUrlStart: tab.imageData?.dataUrl?.substring(0, 100),
-      isValidDataUrl: tab.imageData?.dataUrl?.startsWith('data:image/')
-    });
     
     // 验证dataUrl格式
     if (!tab.imageData?.dataUrl || !tab.imageData.dataUrl.startsWith('data:image/')) {
-      console.error('[DEBUG] setupImagePreview - 错误：无效的图片数据URL');
       return;
     }
     
@@ -985,6 +920,10 @@ class NotepadApp {
           <button class="btn btn-secondary" id="zoom-in-btn" title="放大">
             <i class="fas fa-search-plus"></i>
           </button>
+          <button class="btn btn-primary" id="ocr-btn" title="OCR识别">
+            <i class="fas fa-text-width"></i>
+            <span>OCR识别</span>
+          </button>
         </div>
       </div>
       <div class="image-preview-content">
@@ -994,120 +933,37 @@ class NotepadApp {
       </div>
     `;
     
-    console.log('[DEBUG] setupImagePreview - HTML已创建，准备添加到DOM');
     
     editorContainer.appendChild(imagePreviewContainer);
-    console.log('[DEBUG] setupImagePreview - 图片预览容器已添加到编辑器容器');
+    
+
     
     // 添加分栏调整器（在编辑和分栏模式下）
     if (this.viewMode === 'editor' || this.viewMode === 'split') {
-      // 检查是否需要垂直分栏（可以通过按键或设置来切换）
+      // 检查是否需要垂直分栏
       const useVerticalSplit = this.isVerticalSplitEnabled();
-      console.log('[DEBUG] 垂直分栏启用状态:', useVerticalSplit);
-      console.log('[DEBUG] localStorage verticalSplitEnabled:', localStorage.getItem('verticalSplitEnabled'));
       
       if (useVerticalSplit) {
-        console.log('[DEBUG] 使用垂直分栏布局');
         // 设置垂直分栏布局
         const { topPane, bottomPane } = this.setupVerticalSplit(editorContainer);
         
         // 将图片预览容器移到下面板
         bottomPane.appendChild(imagePreviewContainer);
-        console.log('[DEBUG] 图片预览容器已移到下面板');
         
         // 调整样式以适应垂直布局
         imagePreviewContainer.style.width = '100%';
         imagePreviewContainer.style.borderLeft = 'none';
         imagePreviewContainer.style.borderTop = '1px solid var(--border-color)';
-        console.log('[DEBUG] 垂直布局样式已应用');
       } else {
-        console.log('[DEBUG] 使用水平分栏布局');
         // 使用水平分栏（原有功能）
         this.addSplitResizer(editorContainer);
       }
     }
     
-    // 立即检查图片元素是否正确创建
-    const createdImg = imagePreviewContainer.querySelector('.preview-image');
-    if (createdImg) {
-      console.log('[DEBUG] setupImagePreview - 图片元素已创建:', {
-        src: createdImg.src.substring(0, 100) + '...',
-        complete: createdImg.complete,
-        naturalWidth: createdImg.naturalWidth,
-        naturalHeight: createdImg.naturalHeight
-      });
-    } else {
-      console.error('[DEBUG] setupImagePreview - 错误：图片元素创建失败');
-    }
-    
-    // 调试：检查容器的实际样式
-    const containerStyles = window.getComputedStyle(imagePreviewContainer);
-    console.log('[DEBUG] setupImagePreview - 容器计算样式:', {
-      display: containerStyles.display,
-      visibility: containerStyles.visibility,
-      width: containerStyles.width,
-      height: containerStyles.height,
-      position: containerStyles.position
-    });
-    
-    // 添加图片加载事件监听
-    const imgElement = imagePreviewContainer.querySelector('.preview-image');
-    if (imgElement) {
-      console.log('[DEBUG] setupImagePreview - 图片元素找到，设置事件监听器');
-      
-      // 检查图片元素的样式
-      const imgStyles = window.getComputedStyle(imgElement);
-      console.log('[DEBUG] setupImagePreview - 图片元素计算样式:', {
-        display: imgStyles.display,
-        visibility: imgStyles.visibility,
-        width: imgStyles.width,
-        height: imgStyles.height,
-        maxWidth: imgStyles.maxWidth,
-        maxHeight: imgStyles.maxHeight,
-        objectFit: imgStyles.objectFit
-      });
-      
-      // 检查图片预览内容区域的样式
-      const contentArea = imagePreviewContainer.querySelector('.image-preview-content');
-      if (contentArea) {
-        const contentStyles = window.getComputedStyle(contentArea);
-        console.log('[DEBUG] setupImagePreview - 内容区域计算样式:', {
-          display: contentStyles.display,
-          width: contentStyles.width,
-          height: contentStyles.height,
-          alignItems: contentStyles.alignItems,
-          justifyContent: contentStyles.justifyContent
-        });
-      }
-      
-      imgElement.onload = function() {
-        console.log('[DEBUG] setupImagePreview - 图片加载成功:', {
-          naturalWidth: this.naturalWidth,
-          naturalHeight: this.naturalHeight,
-          clientWidth: this.clientWidth,
-          clientHeight: this.clientHeight,
-          src: this.src.substring(0, 100) + '...'
-        });
-      };
-      
-      imgElement.onerror = function() {
-        console.error('[DEBUG] setupImagePreview - 图片加载失败:', {
-          src: this.src.substring(0, 100) + '...'
-        });
-      };
-      
-      console.log('[DEBUG] setupImagePreview - 图片元素事件监听器已设置');
-    } else {
-      console.error('[DEBUG] setupImagePreview - 错误：找不到图片元素');
-    }
-    
     // 设置图片缩放功能
-    console.log('[DEBUG] setupImagePreview - 开始设置图片缩放功能');
     this.setupImageZoom(tabId, imagePreviewContainer);
     
-    // 不强制切换视图模式，保持当前模式
-    console.log('[DEBUG] setupImagePreview - 图片预览设置完成，当前视图模式:', this.viewMode);
-    // this.uiManager.setViewMode('preview');
+
   }
   
   /**
@@ -1119,6 +975,7 @@ class NotepadApp {
     const zoomInBtn = container.querySelector('#zoom-in-btn');
     const zoomOutBtn = container.querySelector('#zoom-out-btn');
     const zoomResetBtn = container.querySelector('#zoom-reset-btn');
+    const ocrBtn = container.querySelector('#ocr-btn');
     
     let currentZoom = 1;
     const zoomStep = 0.2;
@@ -1192,6 +1049,11 @@ class NotepadApp {
     document.addEventListener('mouseup', () => {
       isDragging = false;
       image.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
+    });
+    
+    // OCR识别按钮事件
+    ocrBtn?.addEventListener('click', () => {
+      this.performOCR(tabId);
     });
     
     // 初始化缩放
@@ -1268,15 +1130,12 @@ class NotepadApp {
    * 添加垂直分栏调整器
    */
   addVerticalSplitResizer(container, topPane, bottomPane) {
-    console.log('[DEBUG] 开始添加垂直分栏调整器');
-    console.log('[DEBUG] 容器:', container);
-    console.log('[DEBUG] 上面板:', topPane);
-    console.log('[DEBUG] 下面板:', bottomPane);
+
     
     // 移除现有的垂直调整器
     const existingResizer = container.querySelector('.vertical-split-resizer');
     if (existingResizer) {
-      console.log('[DEBUG] 移除现有的垂直调整器');
+
       existingResizer.remove();
     }
     
@@ -1288,32 +1147,28 @@ class NotepadApp {
     const initialTop = containerHeight * 0.4;
     resizer.style.top = initialTop + 'px';
     
-    console.log('[DEBUG] 调整器初始位置:', initialTop + 'px');
-    console.log('[DEBUG] 容器高度:', containerHeight + 'px');
+
     
     container.appendChild(resizer);
-    console.log('[DEBUG] 垂直调整器已添加到DOM');
+
     
     // 验证调整器是否正确添加
     const addedResizer = container.querySelector('.vertical-split-resizer');
-    console.log('[DEBUG] 验证调整器是否存在:', !!addedResizer);
-    if (addedResizer) {
-      console.log('[DEBUG] 调整器样式:', window.getComputedStyle(addedResizer));
-      console.log('[DEBUG] 调整器位置:', addedResizer.getBoundingClientRect());
-    }
+
     
     let isResizing = false;
     
     resizer.addEventListener('mouseenter', () => {
-      console.log('[DEBUG] 鼠标进入垂直调整器区域');
+      resizer.style.backgroundColor = 'var(--color-primary)';
     });
     
     resizer.addEventListener('mouseleave', () => {
-      console.log('[DEBUG] 鼠标离开垂直调整器区域');
+      if (!isResizing) {
+        resizer.style.backgroundColor = 'var(--border-color)';
+      }
     });
     
     resizer.addEventListener('mousedown', (e) => {
-      console.log('[DEBUG] 垂直调整器鼠标按下事件');
       isResizing = true;
       resizer.classList.add('dragging');
       document.body.style.cursor = 'row-resize';
@@ -1359,12 +1214,11 @@ class NotepadApp {
    * 设置垂直分栏布局
    */
   setupVerticalSplit(container) {
-    console.log('[DEBUG] 开始设置垂直分栏布局');
-    console.log('[DEBUG] 目标容器:', container);
+
     
     // 添加垂直分栏容器类
     container.classList.add('vertical-split-container');
-    console.log('[DEBUG] 已添加垂直分栏容器类');
+
     
     // 创建上下两个面板
     const topPane = document.createElement('div');
@@ -1375,25 +1229,23 @@ class NotepadApp {
     bottomPane.className = 'split-pane bottom-pane';
     bottomPane.style.height = '60%'; // 图片预览占60%
     
-    console.log('[DEBUG] 创建了上下面板');
-    console.log('[DEBUG] 上面板高度: 40%');
-    console.log('[DEBUG] 下面板高度: 60%');
+
     
     // 将现有内容移到上面板
     const childCount = container.children.length;
-    console.log('[DEBUG] 容器现有子元素数量:', childCount);
+
     
     while (container.firstChild) {
       topPane.appendChild(container.firstChild);
     }
     
-    console.log('[DEBUG] 已将现有内容移到上面板');
+
     
     // 添加面板到容器
     container.appendChild(topPane);
     container.appendChild(bottomPane);
     
-    console.log('[DEBUG] 已添加面板到容器');
+
     
     // 添加垂直调整器
     this.addVerticalSplitResizer(container, topPane, bottomPane);
@@ -1477,6 +1329,54 @@ class NotepadApp {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
+
+  /**
+   * 执行OCR识别
+   */
+  async performOCR(tabId) {
+    const tab = this.tabs.get(tabId);
+    if (!tab || !tab.filePath) {
+      this.showError('OCR错误', '没有找到要识别的图片文件');
+      return;
+    }
+
+    const ocrBtn = document.getElementById('ocr-btn');
+    const ocrBtnText = ocrBtn?.querySelector('span');
+    if (ocrBtn) {
+      ocrBtn.disabled = true;
+      if (ocrBtnText) {
+        ocrBtnText.textContent = '识别中...';
+      }
+    }
+
+    try {
+      // 通过IPC调用主进程的OCR处理程序
+      const result = await window.electronAPI.performOCR(tab.filePath);
+      
+      if (result.success && result.data && result.data.fullText) {
+        // 将OCR识别结果显示在编辑器中
+        if (this.editor) {
+          this.editor.setContent(result.data.fullText);
+          this.showSuccess('OCR识别完成', `识别耗时: ${result.data.elapsedMs || 0}ms`);
+        } else {
+          this.showError('OCR错误', '无法找到编辑器');
+        }
+      } else {
+        const errorMsg = result.error || '未能识别出文本内容';
+        this.showError('OCR识别失败', errorMsg);
+      }
+    } catch (error) {
+      this.showError('OCR识别失败', error.message);
+    } finally {
+      // 恢复按钮状态
+      if (ocrBtn) {
+        ocrBtn.disabled = false;
+        if (ocrBtnText) {
+          ocrBtnText.textContent = 'OCR识别';
+        }
+      }
+    }
+  }
 }
 
 // 应用启动
@@ -1486,17 +1386,11 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // 全局错误处理
   window.addEventListener('error', (e) => {
-    console.error('Global error:', e.error);
-    if (app) {
-      app.showError('应用错误', e.error.message);
-    }
+    // 静默处理全局错误
   });
   
   window.addEventListener('unhandledrejection', (e) => {
-    console.error('Unhandled promise rejection:', e.reason);
-    if (app) {
-      app.showError('异步错误', e.reason.message || e.reason);
-    }
+    // 静默处理未处理的Promise拒绝
   });
 });
 

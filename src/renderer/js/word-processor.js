@@ -16,9 +16,8 @@ class WordProcessor {
   async init() {
     try {
       // 动态导入模块（在渲染进程中需要通过主进程处理）
-      console.log('Word处理器初始化完成');
     } catch (error) {
-      console.error('Word处理器初始化失败:', error);
+      // Word处理器初始化失败
     }
   }
 
@@ -53,7 +52,6 @@ class WordProcessor {
         throw new Error('不支持的文件格式');
       }
     } catch (error) {
-      console.error('处理Word文档失败:', error);
       throw error;
     }
   }
@@ -78,7 +76,7 @@ class WordProcessor {
             return markdownResult.markdown;
           } else {
             // 如果转换失败，返回原始HTML
-            console.warn('HTML转Markdown失败，使用原始HTML:', markdownResult.error);
+            // HTML转Markdown失败，使用原始HTML
             return result.html;
           }
         } else {
@@ -88,7 +86,6 @@ class WordProcessor {
         throw new Error('Word文档处理API不可用');
       }
     } catch (error) {
-      console.error('处理DOCX文件失败:', error);
       throw error;
     }
   }
@@ -113,7 +110,7 @@ class WordProcessor {
             if (markdownResult.success) {
               return markdownResult.markdown;
             } else {
-              console.warn('HTML转Markdown失败，使用原始HTML:', markdownResult.error);
+              // HTML转Markdown失败，使用原始HTML
               return result.html;
             }
           } else if (result.text) {
@@ -129,7 +126,6 @@ class WordProcessor {
         throw new Error('Word文档处理API不可用');
       }
     } catch (error) {
-      console.error('处理DOC文件失败:', error);
       throw error;
     }
   }
@@ -146,8 +142,7 @@ class WordProcessor {
         return this.simpleHtmlToMarkdown(html);
       }
     } catch (error) {
-      console.error('HTML转Markdown失败:', error);
-      return html; // 返回原始HTML
+      return html; // 如果转换失败，返回原始HTML
     }
   }
 
@@ -222,7 +217,6 @@ class WordProcessor {
         throw new Error('文件保存API不可用');
       }
     } catch (error) {
-      console.error('保存Markdown文件失败:', error);
       throw error;
     }
   }

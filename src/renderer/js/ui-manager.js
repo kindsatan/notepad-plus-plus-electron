@@ -38,8 +38,6 @@ class UIManager {
     this.setupTooltips();
     this.setupAnimations();
     this.setupFontControls();
-    
-    console.log('UI管理器初始化完成');
   }
   
   /**
@@ -64,7 +62,6 @@ class UIManager {
    */
   setupFindDialog() {
     if (!this.elements.findDialog) {
-      console.error('Find dialog element not found');
       return;
     }
     
@@ -76,15 +73,7 @@ class UIManager {
     const replaceAllBtn = this.elements.findDialog.querySelector('#replace-all-btn');
     const closeFindBtn = this.elements.findDialog.querySelector('#close-find-btn');
     
-    console.log('Find dialog elements:', {
-      findInput: !!findInput,
-      replaceInput: !!replaceInput,
-      findNextBtn: !!findNextBtn,
-      findPrevBtn: !!findPrevBtn,
-      replaceBtn: !!replaceBtn,
-      replaceAllBtn: !!replaceAllBtn,
-      closeFindBtn: !!closeFindBtn
-    });
+
     
     // 查找输入事件
     findInput?.addEventListener('input', (e) => {
@@ -578,30 +567,18 @@ class UIManager {
     const searchText = findInput?.value;
     const replaceText = replaceInput?.value || '';
     
-    console.log('=== REPLACE DEBUG ===');
-    console.log('Search text:', searchText);
-    console.log('Replace text:', replaceText);
-    console.log('Editor exists:', !!this.app.editor);
-    console.log('Editor element:', this.app.editor?.element);
-    console.log('Current content:', this.app.editor?.getContent()?.substring(0, 100));
-    console.log('Current selection:', window.getSelection().toString());
+
     
     if (searchText && this.app.editor) {
       const result = this.app.editor.replace(searchText, replaceText, this.getFindOptions());
-      console.log('Replace result:', result);
-      console.log('Content after replace:', this.app.editor?.getContent()?.substring(0, 100));
+
       
       if (result) {
         this.app.showSuccess('已替换 1 处');
       } else {
         this.app.showInfo('未找到匹配的文本');
       }
-    } else {
-      console.log('Missing search text or editor');
-      if (!searchText) console.log('No search text provided');
-      if (!this.app.editor) console.log('No editor instance');
     }
-    console.log('=== END REPLACE DEBUG ===');
   }
   
   /**
@@ -885,7 +862,7 @@ class UIManager {
       }
     });
     
-    console.log('字体控制初始化完成');
+
   }
   
   /**
@@ -899,7 +876,7 @@ class UIManager {
         this.fontSettings = { ...this.fontSettings, ...settings };
       }
     } catch (error) {
-      console.warn('加载字体设置失败:', error);
+      // 静默处理加载字体设置失败
     }
   }
   
@@ -910,7 +887,7 @@ class UIManager {
     try {
       localStorage.setItem('fontSettings', JSON.stringify(this.fontSettings));
     } catch (error) {
-      console.warn('保存字体设置失败:', error);
+      // 静默处理保存字体设置失败
     }
   }
   
@@ -922,7 +899,7 @@ class UIManager {
     this.updateEditorFont();
     this.saveFontSettings();
     
-    console.log('字体族已更改为:', fontFamily);
+
   }
   
   /**
@@ -1004,6 +981,6 @@ class UIManager {
     this.updateEditorFont();
     this.saveFontSettings();
     
-    console.log('字体设置已重置');
+
   }
 }

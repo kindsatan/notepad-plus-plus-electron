@@ -5,7 +5,7 @@
   flex-direction: column;
   background: var(--bg-primary);
   position: relative;
-  min-height: 0; /* 确保flex子元素可以收缩 */
+  min-height: 400px; /* 确保编辑器区域有足够的最小高度 */
   height: 100%; /* 确保占满父容器高度 */
 }
 
@@ -14,7 +14,7 @@
   position: relative;
   display: flex;
   overflow: hidden;
-  min-height: 0; /* 确保flex子元素可以收缩 */
+  min-height: 350px; /* 确保编辑器包装器有足够的最小高度 */
   height: 100%; /* 确保占满父容器高度 */
 }
 
@@ -36,9 +36,10 @@
   tab-size: 2;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 0; /* 确保可以收缩 */
+  min-height: 300px; /* 设置最小高度确保文本显示区域足够大 */
   height: 100%; /* 确保占满父容器高度 */
   width: 100%; /* 确保占满父容器宽度 */
+  box-sizing: border-box; /* 确保padding不会影响总尺寸 */
 }
 
 .editor::placeholder {
