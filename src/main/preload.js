@@ -8,6 +8,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   readDirectory: (dirPath) => ipcRenderer.invoke('read-directory', dirPath),
   watchFile: (filePath) => ipcRenderer.invoke('watch-file', filePath),
   openFolderDialog: () => ipcRenderer.invoke('open-folder-dialog'),
+  openFileDialog: (options) => ipcRenderer.invoke('open-file-dialog', options),
+  
+  // Word文档处理
+  processWordDocument: (options) => ipcRenderer.invoke('process-word-document', options),
+  htmlToMarkdown: (html) => ipcRenderer.invoke('html-to-markdown', html),
+  
+  // 图片文件处理
+  processImageFile: (filePath) => ipcRenderer.invoke('process-image-file', filePath),
   
   // 菜单事件监听
   onMenuNewFile: (callback) => ipcRenderer.on('menu-new-file', callback),
@@ -20,10 +28,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onMenuViewMode: (callback) => ipcRenderer.on('menu-view-mode', callback),
   onMenuToggleSidebar: (callback) => ipcRenderer.on('menu-toggle-sidebar', callback),
   
-  // 文件系统事件监听
+  // 文件事件
   onFileOpened: (callback) => ipcRenderer.on('file-opened', callback),
   onFolderOpened: (callback) => ipcRenderer.on('folder-opened', callback),
   onFileChanged: (callback) => ipcRenderer.on('file-changed', callback),
+  onWordFileSelected: (callback) => ipcRenderer.on('word-file-selected', callback),
   
   // 移除监听器
   removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),

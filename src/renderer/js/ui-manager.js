@@ -214,7 +214,9 @@ class UIManager {
       
       // 动画显示
       requestAnimationFrame(() => {
-        tooltip.classList.add('visible');
+        if (tooltip) {
+          tooltip.classList.add('visible');
+        }
       });
     });
     
@@ -410,6 +412,10 @@ class UIManager {
     // 移除所有视图模式类
     document.body.classList.remove('view-editor', 'view-split', 'view-preview');
     
+    // 检查当前是否为图片文件
+    const isImageFile = this.app && this.app.activeTabId && 
+                       this.app.tabs.get(this.app.activeTabId)?.isImageFile;
+    
     switch (mode) {
       case 'editor':
         document.body.classList.add('view-editor');
@@ -420,7 +426,8 @@ class UIManager {
       case 'split':
         document.body.classList.add('view-split');
         editorArea.style.display = 'block';
-        previewArea.style.display = 'block';
+        // 对于图片文件，在split模式下隐藏预览区域
+        previewArea.style.display = isImageFile ? 'none' : 'block';
         break;
         
       case 'preview':

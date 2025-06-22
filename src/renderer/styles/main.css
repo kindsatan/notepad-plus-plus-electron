@@ -852,12 +852,434 @@ body.view-preview .view-modes {
   display: flex !important;
 }
 
-/* 预览模式下隐藏状态栏 */
+/* 预览模式下保持状态栏显示 */
 body.view-preview .status-bar {
-  display: none !important;
+  display: flex !important;
 }
 
 /* 预览模式下调整主内容区域高度 */
 body.view-preview .main-content {
-  height: calc(100vh - 48px) !important; /* 只减去工具栏高度 */
+  height: calc(100vh - 72px) !important; /* 减去工具栏和状态栏高度 */
+}
+
+/* Word文档操作栏样式 */
+.word-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  border-bottom: 1px solid var(--border-color);
+  color: white;
+  font-size: 14px;
+  animation: slideDown 0.3s ease-out;
+}
+
+.word-document-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.word-document-info i {
+  color: #60a5fa;
+  font-size: 16px;
+}
+
+.original-format {
+  opacity: 0.8;
+  font-size: 12px;
+  margin-left: var(--spacing-xs);
+}
+
+.word-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.word-actions .btn {
+  padding: 4px 8px;
+  font-size: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: all var(--transition-fast);
+}
+
+.word-actions .btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.word-actions .btn-primary {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.word-actions .btn-primary:hover {
+  background: rgba(34, 197, 94, 0.3);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Word文档格式样式 */
+.editor-content p.center {
+  text-align: center;
+}
+
+.editor-content p.right {
+  text-align: right;
+}
+
+.editor-content p.left {
+  text-align: left;
+}
+
+.editor-content p.justify {
+  text-align: justify;
+}
+
+.editor-content span.font-size {
+  /* 字体大小将通过内联样式设置 */
+}
+
+.editor-content p.font-size {
+  /* 字体大小将通过内联样式设置 */
+}
+
+/* Word文档标题样式 */
+.editor-content h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0.67em 0;
+  text-align: center;
+}
+
+.editor-content h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0.83em 0;
+}
+
+.editor-content h3 {
+  font-size: 1.17em;
+  font-weight: bold;
+  margin: 1em 0;
+}
+
+/* Word文档段落样式 */
+.editor-content p {
+  margin: 1em 0;
+  line-height: 1.6;
+}
+
+/* Word文档强调样式 */
+.editor-content strong {
+  font-weight: bold;
+}
+
+.editor-content em {
+  font-style: italic;
+}
+
+/* 图片预览样式 */
+.image-preview-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+  position: relative;
+  min-height: 0; /* 确保flex子元素可以收缩 */
+}
+
+/* 在编辑模式下，图片预览容器与编辑器并排显示 */
+.view-mode-editor .editor-area {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  position: relative;
+}
+
+.view-mode-editor .editor-wrapper {
+  flex: 1;
+  min-width: 200px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.view-mode-editor .image-preview-container {
+  flex: 1;
+  min-width: 200px;
+  width: 50%;
+  height: 100%;
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+}
+
+/* 分栏调整器 */
+.split-resizer {
+  width: 4px;
+  background: var(--border-color);
+  cursor: col-resize;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+  transition: background-color 0.2s ease;
+}
+
+.split-resizer:hover {
+  background: var(--primary-color);
+}
+
+.split-resizer.dragging {
+  background: var(--primary-color);
+}
+
+/* 垂直分栏调整器 */
+.vertical-split-resizer {
+  height: 4px;
+  background: var(--border-color);
+  cursor: row-resize;
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  transition: background-color 0.2s ease;
+  pointer-events: auto;
+}
+
+.vertical-split-resizer:hover {
+  background: var(--primary-color);
+}
+
+.vertical-split-resizer.dragging {
+  background: var(--primary-color);
+}
+
+/* 支持垂直分栏的容器 */
+.vertical-split-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.vertical-split-container .split-pane {
+  flex: none;
+  min-height: 150px;
+  overflow: hidden;
+}
+
+.vertical-split-container .bottom-pane {
+  min-height: 200px;
+}
+
+.vertical-split-container .image-preview-container {
+  height: 100%;
+  width: 100%;
+}
+
+/* 在分割模式下，如果是图片文件则只显示图片预览 */
+.view-mode-split .editor-area {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.view-mode-split .editor-wrapper {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.view-mode-split .image-preview-container {
+  flex: 1;
+  min-width: 0;
+  width: 50%;
+  height: 100%;
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* 当存在图片预览容器时，在分割模式下隐藏编辑器 */
+.view-mode-split .editor-area:has(.image-preview-container) .editor-wrapper {
+  display: none;
+}
+
+.view-mode-split .editor-area:has(.image-preview-container) .image-preview-container {
+  border-left: none;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+/* 在预览模式下图片预览占据全部空间 */
+.view-mode-preview .editor-area {
+  display: block;
+}
+
+.view-mode-preview .image-preview-container {
+  height: 100%;
+  width: 100%;
+  border-left: none;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.image-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.image-info h3 {
+  margin: 0;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.image-details {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xs);
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+
+.image-controls {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.image-controls .btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.9em;
+  min-width: auto;
+}
+
+.image-preview-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: auto;
+  padding: 0;
+  min-height: 0;
+  position: relative;
+  /* 确保滚动条在需要时显示 */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.image-preview-content::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.image-preview-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.image-preview-content::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.image-preview-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+.image-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100%;
+  min-height: 100%;
+  transition: all 0.3s ease;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: calc(100% - 20px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-normal);
+  cursor: grab;
+  transform-origin: center center;
+  display: block;
+  margin: 10px auto;
+}
+
+.preview-image:active {
+  cursor: grabbing;
+}
+
+/* 当图片被缩放时，确保容器能够滚动 */
+.image-wrapper.zoomed {
+  width: max-content;
+  height: max-content;
+}
+
+.preview-image:active {
+  cursor: grabbing;
+}
+
+/* 图片缩放按钮状态 */
+.image-controls .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.image-controls .btn:disabled:hover {
+  background: var(--bg-tertiary);
+  transform: none;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .image-preview-header {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    align-items: flex-start;
+  }
+  
+  .image-controls {
+    align-self: stretch;
+    justify-content: center;
+  }
+  
+  .image-details {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
 }

@@ -14,7 +14,7 @@ class FileManager {
     // 文件过滤设置
     this.fileFilters = {
       showHidden: false,
-      extensions: ['.md', '.txt', '.markdown', '.mdown', '.mkd', '.mdx'],
+      extensions: ['.md', '.txt', '.markdown', '.mdown', '.mkd', '.mdx', '.doc', '.docx'],
       excludePatterns: ['node_modules', '.git', '.vscode', 'dist', 'build']
     };
     
@@ -89,7 +89,9 @@ class FileManager {
         const result = await window.electronAPI.openFileDialog({
           filters: [
             { name: 'Markdown Files', extensions: ['md', 'markdown', 'mdown', 'mkd', 'mdx'] },
+            { name: 'Word Documents', extensions: ['doc', 'docx'] },
             { name: 'Text Files', extensions: ['txt'] },
+            { name: 'Image Files', extensions: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'ico', 'tiff', 'tif'] },
             { name: 'All Files', extensions: ['*'] }
           ]
         });
@@ -169,20 +171,31 @@ class FileManager {
     this.loadingFiles.add(filePath);
     
     try {
-      if (window.electronAPI && window.electronAPI.readFile) {
-        const result = await window.electronAPI.readFile(filePath);
-        
-        if (result.success) {
-          this.app.openFileFromData({
-            path: filePath,
-            content: result.content,
-            name: this.getFileNameFromPath(filePath)
-          });
+      const fileExtension = this.getFileExtension(filePath).toLowerCase();
+      
+      // 检查是否为Word文档
+      if (fileExtension === '.doc' || fileExtension === '.docx') {
+        await this.loadWordDocument(filePath, fileExtension);
+      } else if (this.isImageFile(fileExtension)) {
+        // 处理图片文件
+        await this.loadImageFile(filePath);
+      } else {
+        // 处理普通文本文件
+        if (window.electronAPI && window.electronAPI.readFile) {
+          const result = await window.electronAPI.readFile(filePath);
           
-          // 监听文件变化
-          this.watchFile(filePath);
-        } else {
-          throw new Error(result.error);
+          if (result.success) {
+            this.app.openFileFromData({
+              path: filePath,
+              content: result.content,
+              name: this.getFileNameFromPath(filePath)
+            });
+            
+            // 监听文件变化
+            this.watchFile(filePath);
+          } else {
+            throw new Error(result.error);
+          }
         }
       }
     } catch (error) {
@@ -191,6 +204,41 @@ class FileManager {
     } finally {
       // 移除加载标记
       this.loadingFiles.delete(filePath);
+    }
+  }
+  
+  /**
+   * 加载Word文档
+   */
+  async loadWordDocument(filePath, fileExtension) {
+    try {
+      // 创建WordProcessor实例
+      const wordProcessor = new WordProcessor();
+      
+      // 处理Word文档
+      let content;
+      if (fileExtension === '.docx') {
+        content = await wordProcessor.processDocx(filePath);
+      } else if (fileExtension === '.doc') {
+        content = await wordProcessor.processDoc(filePath);
+      }
+      
+      if (content) {
+        // 将Word文档作为Markdown内容打开
+        this.app.openFileFromData({
+          path: filePath,
+          content: content,
+          name: this.getFileNameFromPath(filePath),
+          isWordDocument: true,
+          originalFormat: fileExtension
+        });
+        
+        // 显示转换成功消息
+        this.app.showSuccess('Word文档已转换', `${fileExtension.toUpperCase()} 文档已成功转换为Markdown格式`);
+      }
+    } catch (error) {
+      console.error('加载Word文档失败:', error);
+      throw error;
     }
   }
   
@@ -779,5 +827,61 @@ class FileManager {
     results.forEach(result => {
       result.element.classList.add('search-highlight');
     });
+  }
+  
+  /**
+   * 检查是否为图片文件
+   */
+  isImageFile(fileExtension) {
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg', '.ico', '.tiff', '.tif'];
+    return imageExtensions.includes(fileExtension.toLowerCase());
+  }
+  
+  /**
+   * 加载图片文件
+   */
+  async loadImageFile(filePath) {
+    try {
+      console.log('[DEBUG] loadImageFile - 开始处理图片:', filePath);
+      
+      if (window.electronAPI && window.electronAPI.processImageFile) {
+        const result = await window.electronAPI.processImageFile(filePath);
+        
+        console.log('[DEBUG] loadImageFile - processImageFile结果:', {
+          success: result.success,
+          hasImageData: !!result.imageData,
+          imageDataKeys: result.imageData ? Object.keys(result.imageData) : null,
+          dataUrlLength: result.imageData?.dataUrl ? result.imageData.dataUrl.length : 0,
+          dataUrlPrefix: result.imageData?.dataUrl ? result.imageData.dataUrl.substring(0, 50) : null
+        });
+        
+        if (result.success) {
+          const fileData = {
+            path: filePath,
+            content: result.imageData.dataUrl,
+            name: this.getFileNameFromPath(filePath),
+            isImageFile: true,
+            imageData: result.imageData
+          };
+          
+          console.log('[DEBUG] loadImageFile - 调用openFileFromData:', {
+            path: fileData.path,
+            name: fileData.name,
+            isImageFile: fileData.isImageFile,
+            hasImageData: !!fileData.imageData,
+            contentLength: fileData.content ? fileData.content.length : 0
+          });
+          
+          this.app.openFileFromData(fileData);
+        } else {
+          throw new Error(result.error);
+        }
+      } else {
+        throw new Error('图片处理功能不可用');
+      }
+    } catch (error) {
+      console.error('加载图片文件失败:', error);
+      this.app.showError('加载图片文件失败', error.message);
+    }
   }
 }

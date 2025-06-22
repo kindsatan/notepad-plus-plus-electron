@@ -39,7 +39,10 @@
     "chokidar": "^3.5.3",
     "dompurify": "^3.0.5",
     "highlight.js": "^11.9.0",
-    "marked": "^9.1.2"
+    "mammoth": "^1.9.1",
+    "marked": "^9.1.2",
+    "turndown": "^7.2.0",
+    "word-extractor": "^1.0.4"
   },
   "build": {
     "appId": "com.notepadplusplus.app",
@@ -65,7 +68,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "assets/icon.ico"
@@ -74,7 +79,10 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         }
       ],
       "icon": "assets/icon.icns",
@@ -84,11 +92,15 @@
       "target": [
         {
           "target": "AppImage",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         },
         {
           "target": "deb",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "assets/icon.png",
