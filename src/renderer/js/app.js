@@ -1214,11 +1214,21 @@ class NotepadApp {
    * 设置垂直分栏布局
    */
   setupVerticalSplit(container) {
-
+    console.log('Setting up vertical split');
+    
+    // 检查是否已经是垂直分栏布局
+    if (container.classList.contains('vertical-split-container')) {
+      console.log('Container already has vertical split layout');
+      const topPane = container.querySelector('.top-pane');
+      const bottomPane = container.querySelector('.bottom-pane');
+      if (topPane && bottomPane) {
+        return { topPane, bottomPane };
+      }
+    }
     
     // 添加垂直分栏容器类
     container.classList.add('vertical-split-container');
-
+    console.log('Added vertical-split-container class');
     
     // 创建上下两个面板
     const topPane = document.createElement('div');
@@ -1229,23 +1239,43 @@ class NotepadApp {
     bottomPane.className = 'split-pane bottom-pane';
     bottomPane.style.height = '60%'; // 图片预览占60%
     
-
+    console.log('Created top and bottom panes');
     
-    // 将现有内容移到上面板
+    // 将现有内容移到上面板，但保持编辑器的完整结构
     const childCount = container.children.length;
-
+    console.log('Moving', childCount, 'children to top pane');
     
     while (container.firstChild) {
       topPane.appendChild(container.firstChild);
     }
     
-
+    console.log('Moved all children to top pane');
     
     // 添加面板到容器
     container.appendChild(topPane);
     container.appendChild(bottomPane);
     
-
+    console.log('Added panes to container');
+    
+    // 确保编辑器在新容器中能正确显示
+    const editorWrapper = topPane.querySelector('.editor-wrapper');
+    if (editorWrapper) {
+      editorWrapper.style.height = '100%';
+      editorWrapper.style.minHeight = '200px';
+      
+      const editor = editorWrapper.querySelector('.editor');
+      if (editor) {
+        editor.style.height = '100%';
+        editor.style.minHeight = '180px';
+        // 强制重新渲染编辑器内容
+        if (this.editor) {
+          const currentContent = this.editor.getContent();
+          setTimeout(() => {
+            this.editor.setContent(currentContent, false);
+          }, 0);
+        }
+      }
+    }
     
     // 添加垂直调整器
     this.addVerticalSplitResizer(container, topPane, bottomPane);
